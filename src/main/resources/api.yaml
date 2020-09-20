@@ -1,0 +1,427 @@
+openapi: 3.0.0
+info:
+  title: Pizza Ordering System API
+  description: This is API specs for Pyco's pizza ordering system
+  contact:
+    email: trungpnt0605@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  version: "2.0.0"
+
+tags:
+  - name: product
+  - name: category
+  - name: user
+
+paths:
+  /product/:
+    post:
+      summary: adds a product
+      description: add a product to the system
+      operationId: createProduct
+      requestBody:
+        description: Create a product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: New product added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectCreationSuccessResponse'
+        '404':
+          description: 'The product with the same information already exists'
+
+  /product/{id}:
+    get:
+      summary: get all products by categoryId
+      operationId: getProductByCatId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: all products are listed with the given categoryId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+        '404':
+          description: bad input parameter
+
+
+  /productDetail:
+    post:
+      summary: adds a product detail
+      description: add a product detail to the system
+      operationId: createProductDetail
+      requestBody:
+        description: Create a product detail
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductDetailRequest'
+      responses:
+        '201':
+          description: New product detail added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectCreationSuccessResponse'
+        '404':
+          description: 'The product detail with the same information already exists'
+
+  /productDetail/{proId}:
+    get:
+      summary: get product details for a specific product
+      description: get product details from the system for a product
+      operationId: getProductDetailByProId
+      parameters:
+        - name: proId
+          in : path
+          required : true
+          schema:
+            type: integer
+            default : 1
+      responses:
+        '200':
+          description: Successful get the product detail with the given productId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetailListResponse'
+        '404':
+          description: bad input parameter
+
+  /category:
+    get:
+      summary: get all categories
+      operationId: getAllCategories
+      responses:
+        '200':
+          description: search results satisfy criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+        '404':
+          description: bad input parameter
+
+    post:
+      summary: creates a category
+      description: creates a new category
+      operationId: createCategory
+      requestBody:
+        description: Create a category
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectCreationSuccessResponse'
+        '404':
+          description: an existing category already exists
+
+  /category/{categoryName}:
+    get:
+      summary: get category by name
+      operationId: getCategoryByName
+      parameters:
+        - name: categoryName
+          in: path
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponseModel'
+        '404':
+          description: bad input parameter
+
+  /user/signup:
+    post:
+      summary: adds a user
+      description: Adds a user to the system
+      operationId: addUser
+      requestBody:
+        description: Create user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: user created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseModel'
+        '404':
+          description: The user already exists
+
+  /user/login:
+    post:
+      summary : User signing in
+      operationId: signIn
+      requestBody:
+        description: credentials are provided
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequestModel'
+      responses:
+        '201':
+          description: Provided credentials are authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponseModel'
+
+        '404':
+          description: bad credentials
+
+
+components:
+  schemas:
+    UserLoginRequestModel:
+      type: object
+      properties:
+        requiredEntry:
+          type: string
+        password:
+          type: string
+          format: password
+
+    CreateCategoryRequest:
+      type: object
+      properties:
+        catId:
+          type: integer
+          example : 1
+        categoryName:
+          type: string
+          example: pizza
+        imgUrl:
+          type: string
+    CategoryListResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryResponseModel'
+    CategoryResponseModel:
+      type: object
+      properties:
+        catId:
+          type: integer
+          example: 1
+        categoryName:
+          type: string
+          example: Example Category
+        imgUrl:
+          type: string
+    ProductListResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResponseModel'
+    ProductResponseModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          example : 1
+        name:
+          type: string
+          example: Example pizza
+        catId:
+          type: integer
+        imgUrl:
+          type: string
+        price:
+          type: object
+        description:
+          type: string
+        items:
+          $ref: '#/components/schemas/ProductDetailListResponse'
+
+    ProductDetailListResponse:
+      type: object
+      properties:
+        productDetail:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDetailResponseModel'
+
+    ProductDetailResponseModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          example : 1
+        proId:
+          type: integer
+        extra_option:
+          type: string
+          example: Example options
+        price:
+          type: number
+          format: double
+
+
+    CreateProductRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example : 1
+        catId:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Example Pizza
+        imgUrl:
+          type: string
+        price:
+          $ref: '#/components/schemas/SizePrice'
+        description:
+          type: string
+
+    CreateProductDetailRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        extra_option:
+          type: string
+          example: Example Options
+        proId:
+          type: integer
+          example: 1
+        price:
+          type: number
+          format : double
+
+    SizePrice:
+      type: object
+      properties:
+        sizeS:
+          type: number
+          format: double
+        sizeM:
+          type: number
+          format: double
+        sizeL:
+          type: number
+          format: double
+
+
+    UserResponseModel:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserSignUpRest'
+        token:
+          type: string
+        message:
+          type: string
+
+    UserLoginResponseModel:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserLoginRest'
+        token:
+          type: string
+        message:
+          type: string
+    UserSignUpRest:
+      type: object
+      properties:
+        phone:
+          type: string
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+
+    UserLoginRest:
+      type: object
+      properties:
+        email:
+          type: string
+        lastname:
+          type: string
+        firstname:
+          type: string
+        phone:
+          type: string
+
+
+    CreateUserRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+          format: password
+        lastname:
+          type: string
+          default: ""
+        firstname:
+          type: string
+        email:
+          type: string
+
+    ObjectCreationSuccessResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        responseCode:
+          type: integer
+
+    ApiError:
+      type: object
+      properties:
+        faults:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fault'
+        responseCode:
+          type: integer
+    Fault:
+      type: object
+      properties:
+        internalMessage:
+          type: string
+        code:
+          type: integer
+        userMessage:
+          type: string
