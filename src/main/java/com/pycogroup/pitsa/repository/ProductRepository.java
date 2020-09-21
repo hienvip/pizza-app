@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends MongoRepository<Product, ObjectId> {
     List<Product> findByCatId(Integer catId);
+    Product findById(Integer id);
+    void deleteProductById(Integer proId);
     boolean existsById(int id);
 }

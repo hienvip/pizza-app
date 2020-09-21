@@ -56,7 +56,46 @@ paths:
                 $ref: '#/components/schemas/ProductListResponse'
         '404':
           description: bad input parameter
-
+    delete:
+      summary: delete product by proId
+      operationId: deleteProductByProId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: product deleted
+        '404':
+          description: bad input parameter
+    put:
+      summary: update product by proId
+      operationId: updateProductByProId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            default: 1
+      requestBody:
+        description: Update a product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '201':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectUpdateSuccessResponse'
+        '404':
+          description: 'Product not found'
 
   /productDetail:
     post:
@@ -239,6 +278,15 @@ components:
           example: Example Category
         imgUrl:
           type: string
+
+    ProductResponse:
+      type: object
+      properties:
+        products:
+          type: object
+          items:
+            $ref: '#/components/schemas/ProductResponseModel'
+
     ProductListResponse:
       type: object
       properties:
@@ -289,6 +337,21 @@ components:
           type: number
           format: double
 
+    UpdateProductRequest:
+      type: object
+      properties:
+        catId:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Example Pizza
+        imgUrl:
+          type: string
+        price:
+          $ref: '#/components/schemas/SizePrice'
+        description:
+          type: string
 
     CreateProductRequest:
       type: object
@@ -400,6 +463,14 @@ components:
           type: string
 
     ObjectCreationSuccessResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        responseCode:
+          type: integer
+
+    ObjectUpdateSuccessResponse:
       type: object
       properties:
         id:

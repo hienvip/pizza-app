@@ -1,10 +1,7 @@
 package com.pycogroup.pitsa.controller;
 
 import com.pycogroup.pitsa.api.ProductApi;
-import com.pycogroup.pitsa.api.model.CreateProductRequest;
-import com.pycogroup.pitsa.api.model.ObjectCreationSuccessResponse;
-import com.pycogroup.pitsa.api.model.ProductListResponse;
-import com.pycogroup.pitsa.api.model.ProductResponseModel;
+import com.pycogroup.pitsa.api.model.*;
 import com.pycogroup.pitsa.model.Product;
 import com.pycogroup.pitsa.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +20,8 @@ import java.util.List;
 @CrossOrigin
 public class ProductController implements ProductApi{
 
+
+
     @Autowired
     private ProductService productService;
 
@@ -39,11 +38,31 @@ public class ProductController implements ProductApi{
         return new ResponseEntity<ObjectCreationSuccessResponse>(result,HttpStatus.CREATED);
     }
 
+
+
     @Override
     public ResponseEntity<ProductListResponse> getProductByCatId(Integer id) {
         List<Product> products = productService.findByCatId(id);
         return buildProductListResponse(products);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteProductByProId(Integer id) {
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ObjectUpdateSuccessResponse> updateProductByProId(Integer id,@Valid UpdateProductRequest updateProductRequest) {
+        Product product =modelMapper.map(updateProductRequest,Product.class);
+        ObjectUpdateSuccessResponse objectUpdateSuccessResponse = new ObjectUpdateSuccessResponse();
+        return new ResponseEntity<>(objectUpdateSuccessResponse, HttpStatus.OK);
+    }
+
+    private ResponseEntity<ProductResponse> buildProductResponse(Product product) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     private ResponseEntity<ProductListResponse> buildProductListResponse(List<Product> productList) {
         ProductListResponse productListResponse = new ProductListResponse();

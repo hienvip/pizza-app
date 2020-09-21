@@ -27,4 +27,15 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Record already exists");
     }
 
+    @Override
+    public void deleteProduct(Integer proId) {
+        productRepository.deleteProductById(proId);
+    }
+
+    @Override
+    public Product updateProduct(Integer proId) {
+        return null;
+    }
+
+
 }
